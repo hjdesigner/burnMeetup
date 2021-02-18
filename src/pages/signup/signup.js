@@ -1,8 +1,9 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
 import AppLoading from 'expo-app-loading';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, Alert } from 'react-native';
 import { useFonts, OpenSans_600SemiBold, OpenSans_400Regular } from '@expo-google-fonts/open-sans';
+import Firebase from '../../../firebase';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
 
@@ -21,7 +22,10 @@ export default function signup() {
     text.length > 1 ? setDisabledPassword(false) : setDisabledPassword(true);
   }
   const handleSend = () => {
-    console.log('aqui')
+    Firebase.auth()
+      .createUserWithEmailAndPassword(email, password)
+      .then(() => Alert.alert('Usuário criado com sucesso!'))
+      .catch(error => Alert.alert('Não foi possível criar o usuário', 'Tente novamente mais tarde'));
   }
 
   let [fontsLoaded] = useFonts({
