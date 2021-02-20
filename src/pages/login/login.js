@@ -24,8 +24,8 @@ export default function login({ navigation }) {
   }
   const handleSend = () => {
     Firebase.auth()
-      .createUserWithEmailAndPassword(email, password)
-      .then(() => setSuccess(true))
+      .signInWithEmailAndPassword(email, password)
+      .then(() => Alert.alert('Sucesso!'))
       .catch(error => Alert.alert(error.message));
   }
 
