@@ -1,9 +1,9 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
 import AppLoading from 'expo-app-loading';
-import { StyleSheet, Text, View, Alert, TouchableOpacity, useWindowDimensions } from 'react-native';
+import { StyleSheet, Text, View, Alert, TouchableOpacity, useWindowDimensions, Button } from 'react-native';
 import { useFonts, OpenSans_600SemiBold, OpenSans_400Regular } from '@expo-google-fonts/open-sans';
-import Firebase from '../../../firebase';
+import Firebase, { db } from '../../../firebase';
 import Input from '../../components/Input';
 
 export default function signup({ navigation }) {
@@ -17,17 +17,35 @@ export default function signup({ navigation }) {
   const handleEmail = (text) => {
     const er = new RegExp(/^[A-Za-z0-9_\-\.]+@[A-Za-z0-9_\-\.]{2,}\.[A-Za-z0-9]{2,}(\.[A-Za-z0-9])?/);
     setEmail(text);
-    text.length > 1 && er.test(text) ? setDisabledEmail(false) : setDisabledEmail(true);
+    er.test(text) ? setDisabledEmail(false) : setDisabledEmail(true);
   }
   const handlePassword = (text) => {
     setPassword(text);
-    text.length > 1 ? setDisabledPassword(false) : setDisabledPassword(true);
+    text.length >= 6 ? setDisabledPassword(false) : setDisabledPassword(true);
   }
-  const handleSend = () => {
-    Firebase.auth()
-      .createUserWithEmailAndPassword(email, password)
-      .then(() => setSuccess(true))
-      .catch(error => Alert.alert(error.message));
+  const handleSend = async () => {
+    try {
+      const response = await Firebase.auth().createUserWithEmailAndPassword(email, password);
+      if (response.user.uid) {
+        const user = {
+          uid: response.user.uid,
+          email: email,
+        };
+        setSuccess(true);
+        db.collection('users')
+          .doc(response.user.uid)
+          .set(user)
+
+        return;
+      }
+      
+    } catch (error) {
+      if (error.code === 'auth/email-already-in-use') {
+        Alert.alert('O endereço de e-mail já está sendo usado por outra conta.')
+        return;
+      }
+      Alert.alert('Houve um erro na hora de criar sua conta, tente novamente mais tarde.');
+    }
   }
 
   let [fontsLoaded] = useFonts({
@@ -63,6 +81,7 @@ export default function signup({ navigation }) {
               onPress={handleSend}>
               <Text style={styles.buttonText}>Cadastrar</Text>
             </TouchableOpacity>
+            <Button title='voltar para o login' onPress={() => navigation.navigate('Login')} />
           </>
         )}
       </View>
