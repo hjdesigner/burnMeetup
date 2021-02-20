@@ -21,7 +21,7 @@ const Header = () => {
 
 const styles = StyleSheet.create({
   header: {
-    paddingTop: 16,
+    paddingTop: 50,
     paddingBottom: 16,
     borderBottomWidth: 1,
     borderBottomColor: '#E5E5E5',
