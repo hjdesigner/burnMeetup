@@ -16,17 +16,30 @@ export default function login({ navigation }) {
   const handleEmail = (text) => {
     const er = new RegExp(/^[A-Za-z0-9_\-\.]+@[A-Za-z0-9_\-\.]{2,}\.[A-Za-z0-9]{2,}(\.[A-Za-z0-9])?/);
     setEmail(text);
-    text.length > 1 && er.test(text) ? setDisabledEmail(false) : setDisabledEmail(true);
+    er.test(text) ? setDisabledEmail(false) : setDisabledEmail(true);
   }
   const handlePassword = (text) => {
     setPassword(text);
-    text.length > 1 ? setDisabledPassword(false) : setDisabledPassword(true);
+    text.length >= 6 ? setDisabledPassword(false) : setDisabledPassword(true);
   }
-  const handleSend = () => {
-    Firebase.auth()
-      .signInWithEmailAndPassword(email, password)
-      .then(() => Alert.alert('Sucesso!'))
-      .catch(error => Alert.alert(error.message));
+  const handleSend = async () => {
+    try {
+      const response = await Firebase.auth().signInWithEmailAndPassword(email, password)
+      
+      if (response.user.uid) {
+       Alert.alert('Sucesso!!!'); 
+      }
+    } catch (erro) {
+      if (erro.code === 'auth/user-not-found') {
+        Alert.alert('Conta não encontrada, por favor crie sua conta!')
+        return;
+      }
+      if (erro.code === 'auth/user-disabled') {
+        Alert.alert('A conta do usuário foi desabilitada por um administrador.');
+        return;
+      }
+      Alert.alert('Dados incorreto, por favor verifique o e-mail e senha.');
+    }
   }
 
   let [fontsLoaded] = useFonts({
