@@ -1,17 +1,20 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
 import AppLoading from 'expo-app-loading';
-import { StyleSheet, Text, View, Alert, TouchableOpacity, useWindowDimensions, Button } from 'react-native';
+import { StyleSheet, Text, View, Alert, TouchableOpacity, useWindowDimensions, Button, ActivityIndicator } from 'react-native';
 import { useFonts, OpenSans_600SemiBold, OpenSans_400Regular } from '@expo-google-fonts/open-sans';
 import Firebase from '../../../firebase';
 import Input from '../../components/Input';
+import { useUser } from '../../hooks';
 
 export default function login({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [disabledEmail, setDisabledEmail] = useState(true);
   const [disabledPassword, setDisabledPassword] = useState(true);
+  const [loading, setLoading] = useState(false);
   const windowHeight = useWindowDimensions().height;
+  const { getUser } = useUser();
 
   const handleEmail = (text) => {
     const er = new RegExp(/^[A-Za-z0-9_\-\.]+@[A-Za-z0-9_\-\.]{2,}\.[A-Za-z0-9]{2,}(\.[A-Za-z0-9])?/);
@@ -23,13 +26,19 @@ export default function login({ navigation }) {
     text.length >= 6 ? setDisabledPassword(false) : setDisabledPassword(true);
   }
   const handleSend = async () => {
+    setLoading(true);
+
     try {
       const response = await Firebase.auth().signInWithEmailAndPassword(email, password)
       
       if (response.user.uid) {
-       Alert.alert('Sucesso!!!'); 
+        setEmail('');
+        setPassword('');
+        getUser(response.user.uid);
+        setLoading(false);
       }
     } catch (erro) {
+      setLoading(false);
       if (erro.code === 'auth/user-not-found') {
         Alert.alert('Conta não encontrada, por favor crie sua conta!')
         return;
@@ -53,20 +62,26 @@ export default function login({ navigation }) {
 
   return (
     <View style={{ height: windowHeight - 100, justifyContent: 'center', width: '100%' }}>
-      <View style={styles.form}>
-        <Text style={styles.text}>Junte-se a um grupo para praticar exercícios juntos.</Text>
-        <Input text='E-mail' value={email} onChangeText={handleEmail} secure={false} />
-        <View style={styles.space}></View>
-        <Input text='Senha' value={password} onChangeText={handlePassword} secure={true} />
-        <View style={styles.space}></View>
-        <TouchableOpacity
-          style={(disabledEmail || disabledPassword) ? styles.buttonDisabled: styles.button}
-          disabled={disabledEmail || disabledPassword} 
-          onPress={handleSend}>
-            <Text style={styles.buttonText}>Entrar</Text>
-        </TouchableOpacity>
-        <Button title='Não tem conta ainda? Cadatre-se' onPress={() => navigation.navigate('Signup')} />
-      </View>
+      {loading ? (
+        <ActivityIndicator size="large" color="#4587F4" />
+      ) : (
+        <>
+          <View style={styles.form}>
+            <Text style={styles.text}>Junte-se a um grupo para praticar exercícios juntos.</Text>
+            <Input text='E-mail' value={email} onChangeText={handleEmail} secure={false} />
+            <View style={styles.space}></View>
+            <Input text='Senha' value={password} onChangeText={handlePassword} secure={true} />
+            <View style={styles.space}></View>
+            <TouchableOpacity
+              style={(disabledEmail || disabledPassword) ? styles.buttonDisabled: styles.button}
+              disabled={disabledEmail || disabledPassword} 
+              onPress={handleSend}>
+                <Text style={styles.buttonText}>Entrar</Text>
+            </TouchableOpacity>
+            <Button title='Não tem conta ainda? Cadatre-se' onPress={() => navigation.navigate('Signup')} />
+          </View>
+        </>
+      )}
     </View>
   );
 }
