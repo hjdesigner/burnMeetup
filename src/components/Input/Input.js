@@ -3,7 +3,7 @@ import AppLoading from 'expo-app-loading';
 import { StyleSheet, View, Text, TextInput } from 'react-native';
 import { useFonts, OpenSans_600SemiBold, OpenSans_400Regular } from '@expo-google-fonts/open-sans';
 
-const Input = ({ text, value, onChangeText, secure }) => {
+const Input = ({ text, value, onChangeText, secure, ...props}) => {
   let [fontsLoaded] = useFonts({
     OpenSans_600SemiBold,
     OpenSans_400Regular,
@@ -16,7 +16,7 @@ const Input = ({ text, value, onChangeText, secure }) => {
   return (
     <View style={styles.container}>
       <Text style={styles.label}>{text}</Text>
-      <TextInput style={styles.input} secureTextEntry={secure} value={value} onChangeText={text => onChangeText(text)} />
+      <TextInput style={styles.input} secureTextEntry={secure} value={value} onChangeText={text => onChangeText(text)} {...props} />
     </View>
   )
 }

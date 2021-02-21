@@ -2,14 +2,9 @@ import 'react-native-gesture-handler';
 import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
 import Header from './src/components/Header';
-import Signup from './src/pages/signup';
-import Login from './src/pages/login';
+import Navigation from './Navigation';
 import { UserProvider } from './src/contexts';
-
-const Stack = createStackNavigator();
 
 export default function App() {
   return (
@@ -17,28 +12,7 @@ export default function App() {
       <UserProvider>
         <Header />
         <View style={styles.nav}>
-          <NavigationContainer>
-            <Stack.Navigator initialRouteName="Login">
-              <Stack.Screen
-                 options={{ 
-                  headerShown: false,
-                  cardStyle: { 
-                    backgroundColor: '#FFF',
-                  }
-                }}
-                name="Signup"
-                component={Signup} />
-              <Stack.Screen 
-                options={{ 
-                  headerShown: false,
-                  cardStyle: { 
-                    backgroundColor: '#FFF',
-                  }
-                }}
-                name="Login"
-                component={Login} />
-            </Stack.Navigator>
-          </NavigationContainer>
+          <Navigation />
         </View>
       </UserProvider> 
     </View>
@@ -54,7 +28,8 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   nav: {
+    flex: 1,
     width: '100%',
-    height: '100%',
+    backgroundColor: '#fff',
   }
 });

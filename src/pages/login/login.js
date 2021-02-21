@@ -12,9 +12,8 @@ export default function login({ navigation }) {
   const [password, setPassword] = useState('');
   const [disabledEmail, setDisabledEmail] = useState(true);
   const [disabledPassword, setDisabledPassword] = useState(true);
-  const [loading, setLoading] = useState(false);
   const windowHeight = useWindowDimensions().height;
-  const { getUser } = useUser();
+  const { getUser, userLoading, setUserLoading } = useUser();
 
   const handleEmail = (text) => {
     const er = new RegExp(/^[A-Za-z0-9_\-\.]+@[A-Za-z0-9_\-\.]{2,}\.[A-Za-z0-9]{2,}(\.[A-Za-z0-9])?/);
@@ -26,7 +25,7 @@ export default function login({ navigation }) {
     text.length >= 6 ? setDisabledPassword(false) : setDisabledPassword(true);
   }
   const handleSend = async () => {
-    setLoading(true);
+    setUserLoading(true);
 
     try {
       const response = await Firebase.auth().signInWithEmailAndPassword(email, password)
@@ -35,10 +34,9 @@ export default function login({ navigation }) {
         setEmail('');
         setPassword('');
         getUser(response.user.uid);
-        setLoading(false);
       }
     } catch (erro) {
-      setLoading(false);
+      setUserLoading(false);
       if (erro.code === 'auth/user-not-found') {
         Alert.alert('Conta não encontrada, por favor crie sua conta!')
         return;
@@ -62,7 +60,7 @@ export default function login({ navigation }) {
 
   return (
     <View style={{ height: windowHeight - 100, justifyContent: 'center', width: '100%' }}>
-      {loading ? (
+      {userLoading ? (
         <ActivityIndicator size="large" color="#4587F4" />
       ) : (
         <>

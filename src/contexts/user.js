@@ -5,6 +5,7 @@ const UserContext = createContext();
 
 function UserProvider({ children }) {
   const [user, setUser] = useState({});
+  const [userLoading, setUserLoading] = useState(false);
 
   const getUser = async (uid) => {
     const response = await db
@@ -13,13 +14,16 @@ function UserProvider({ children }) {
                             .get();
     if (response) {
       setUser(response.data());
+      setUserLoading(false);
     }
   }
   
   return (
     <UserContext.Provider value={{
       user,
+      userLoading,
       getUser,
+      setUserLoading,
     }}>
       {children}
     </UserContext.Provider>
