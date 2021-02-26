@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import AppLoading from 'expo-app-loading';
 import { StyleSheet, Text, View, Alert, TouchableOpacity, useWindowDimensions, Button, ActivityIndicator } from 'react-native';
 import { useFonts, OpenSans_600SemiBold, OpenSans_400Regular } from '@expo-google-fonts/open-sans';
-import Firebase from '../../../firebase';
+import Firebase, { db } from '../../../firebase';
 import Input from '../../components/Input';
 import { useUser } from '../../hooks';
 

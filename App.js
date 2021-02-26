@@ -4,16 +4,18 @@ import React, { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import Header from './src/components/Header';
 import Navigation from './Navigation';
-import { UserProvider } from './src/contexts';
+import { UserProvider, CityProvider } from './src/contexts';
 
 export default function App() {
   return (
     <View style={styles.container}>
       <UserProvider>
-        <Header />
-        <View style={styles.nav}>
-          <Navigation />
-        </View>
+        <CityProvider>
+          <Header />
+          <View style={styles.nav}>
+            <Navigation />
+          </View>
+       </CityProvider>
       </UserProvider> 
     </View>
   );

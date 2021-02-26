@@ -17,6 +17,27 @@ function UserProvider({ children }) {
       setUserLoading(false);
     }
   }
+
+  const setName = (text) => {
+    setUser({
+      ...user,
+      name: text,
+    })
+  }
+
+  const setLocalization = (text) => {
+    setUser({
+      ...user,
+      localization: text,
+    });
+  }
+
+  const setLevel = (text) => {
+    setUser({
+      ...user,
+      level: text,
+    })
+  }
   
   return (
     <UserContext.Provider value={{
@@ -24,6 +45,9 @@ function UserProvider({ children }) {
       userLoading,
       getUser,
       setUserLoading,
+      setName,
+      setLocalization,
+      setLevel,
     }}>
       {children}
     </UserContext.Provider>
